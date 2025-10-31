@@ -1,13 +1,13 @@
 package leetcode.LeetInfra;
 
-import java.util.Map;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public abstract class LeetClass<TOUTPUT> {
-
     public static final String TEST_RUN_TITLE = "Test run number #%d";
 
-    abstract Map<Supplier<TOUTPUT>, TOUTPUT> runToResultMap();
+    abstract List<LeetRun<TOUTPUT>> leetRunList();
 
     private static <T> T measure(String name, Supplier<T> supplier) {
         long start = System.nanoTime();
@@ -26,20 +26,20 @@ public abstract class LeetClass<TOUTPUT> {
     }
 
     public void testRunner() throws LeetRunFailedException {
-        Map<Supplier<TOUTPUT>, TOUTPUT> supplierTOUTPUTHashMap = this.runToResultMap();
-        int number = 1;
+        AtomicInteger leetRunCounter = new AtomicInteger(1);
 
-        for(Map.Entry<Supplier<TOUTPUT>, TOUTPUT> entry : supplierTOUTPUTHashMap.entrySet()){
-            Supplier<TOUTPUT> key = entry.getKey();
-            TOUTPUT expected = entry.getValue();
+        for (LeetRun<TOUTPUT> leetRun : this.leetRunList()) {
+            Supplier<TOUTPUT> leetRunSupplier = leetRun.getLeetRunSupplier();
+            TOUTPUT expected = leetRun.getExpected();
 
-            String runTitle = String.format(TEST_RUN_TITLE, number);
+            String runTitle = leetRun.getRunName()
+                    .orElseGet(() -> String.format(TEST_RUN_TITLE, leetRunCounter.get()));
 
-            TOUTPUT actual = measure(runTitle, key);
+            TOUTPUT actual = measure(runTitle, leetRunSupplier);
 
             this.handleTestResult(actual, expected);
 
-            number++;
+            leetRunCounter.incrementAndGet();
         }
     }
 }
