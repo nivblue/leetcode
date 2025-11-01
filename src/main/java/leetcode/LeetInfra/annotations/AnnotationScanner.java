@@ -43,7 +43,7 @@ public class AnnotationScanner {
                     if (annotationClass == LeetCodeToRun.class) {
                         LeetCodeToRun annotation = clazz.getAnnotation(LeetCodeToRun.class);
                         if (!annotation.enabled()) {
-                            warn("Skiping LeetCode class " + className + " - @LeetCodeToRun set to DISABLE in this specific class");
+                            warn("[AnnotationScanner] Skiping LeetCode class " + className + " - @LeetCodeToRun set to DISABLE in this specific class");
                             // ⛔ Skip classes explicitly disabled
                             continue;
                         }

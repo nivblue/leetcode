@@ -5,7 +5,10 @@ import leetcode.LeetInfra.annotations.LeetCodeToRun;
 import leetcode.LeetInfra.logger.LeetLogger;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static leetcode.LeetInfra.logger.LeetLogger.*;
 
@@ -15,6 +18,7 @@ public class LeetRunner {
     public static final Class<LeetClass> PARENT_TYPE = LeetClass.class;
 
     private final String leetClassesDir;
+    private final Set<Class<? extends LeetClass>> classList;
 
     public LeetRunner() {
         this(DEFAULT_PATH);
@@ -22,11 +26,11 @@ public class LeetRunner {
 
     public LeetRunner(String leetClassesDir) {
         this.leetClassesDir = leetClassesDir;
+        this.classList = new HashSet<>();
     }
 
     public void runLeets() throws LeetRunFailedException {
-        List<Class<? extends LeetClass>> tasks =
-                AnnotationScanner.findAnnotated(leetClassesDir, LEET_CODE_TO_RUN_CLASS, PARENT_TYPE);
+        List<Class<? extends LeetClass>> tasks = this.findClasses();
 
         if (tasks.isEmpty()) {
             warn("WARNING: No leetcode classes found...");
@@ -37,6 +41,34 @@ public class LeetRunner {
             this.runOne(clazz);
             success("Class " + clazz.getSimpleName() + " passed successfully", LeetLogger.getBOLD_TEXT());
         }
+    }
+
+    public void addClassManually(Class<? extends LeetClass> classToAdd) {
+        this.addClassManually(classToAdd, false);
+    }
+
+    public void addClassManually(Class<? extends LeetClass> classToAdd, boolean forceEnable) {
+        Optional.ofNullable(classToAdd)
+                .filter(LeetClass.class::isAssignableFrom)
+                .filter(cls -> cls.isAnnotationPresent(LeetCodeToRun.class))
+                .filter(cls -> cls.getAnnotation(LeetCodeToRun.class).enabled() || forceEnable)
+                .ifPresentOrElse(this.classList::add, () -> {
+                    warn("Not able to add " + classToAdd.getSimpleName() + " to class list, possible problems:");
+                    warn("1) The class doesn't extand the LeetClass<>");
+                    warn("2) The class is not annotated by the @LeetCodeToRun annotation");
+                    warn("2) The class is annotated, but set to (enabled=false)");
+                });
+    }
+
+    private List<Class<? extends LeetClass>> findClasses() {
+        List<Class<? extends LeetClass>> classes =
+                AnnotationScanner.findAnnotated(leetClassesDir, LEET_CODE_TO_RUN_CLASS, PARENT_TYPE);
+
+        if (!this.classList.isEmpty()) {
+            classes.addAll(this.classList);
+        }
+
+        return classes;
     }
 
     private void runOne(Class<?> clazz) throws LeetRunFailedException {

@@ -11,6 +11,7 @@ public class StringUtils {
     private static final char CLOSE_SQUARE_BRACKETS = ']';
     private static final char OPEN_CURLEY_BRACKETS = '{';
     private static final char CLOSE_CURLEY_BRACKETS = '}';
+    private static final char EOL_JAVA_CHAR = ';';
 
     private static final String ARRAY_BRACKETS_STRING = "[]";
     private static final String DEFAULT_ARRAY_NAME = "array";
@@ -61,13 +62,13 @@ public class StringUtils {
             solution.append(arrayName);
             solution.append(" = new ");
             solution.append(stringArrayType);
-            solution.append(brackets);
-            solution.append(javaFormatDataString);
         } catch(Exception e) {
             error("Exception happened when trying to check your type : " + stringArrayType + ", e : " + e);
-            solution.append(brackets);
-            solution.append(javaFormatDataString);
         }
+
+        solution.append(brackets);
+        solution.append(javaFormatDataString);
+        solution.append(EOL_JAVA_CHAR);
 
         return solution.toString();
     }
