@@ -1,14 +1,17 @@
 package leetcode.LeetInfra;
 
+import leetcode.LeetInfra.problem_fetcher.LeetCodeProblemFetcher;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import static leetcode.LeetInfra.logger.LeetLogger.error;
+import static leetcode.LeetInfra.logger.LeetLogger.warn;
 
 public class LeetRunner {
     private static final String DEFAULT_PATH = "leetcode.LeetInfra";
     public static final Class<LeetCodeToRun> LEET_CODE_TO_RUN_CLASS = LeetCodeToRun.class;
     public static final Class<LeetClass> PARENT_TYPE = LeetClass.class;
-    private static final String WARNING_COLOR = "\u001B[33m";
-    private static final String NORMAL_COLOR = "\u001B[0m";
 
     private final String leetClassesDir;
 
@@ -18,14 +21,6 @@ public class LeetRunner {
 
     public LeetRunner(String leetClassesDir) {
         this.leetClassesDir = leetClassesDir;
-    }
-
-    void warn(String message) {
-        System.err.println(WARNING_COLOR + message + NORMAL_COLOR);
-    }
-
-    void error(String message) {
-        System.err.println(message);
     }
 
     void runOne(Class<?> clazz) throws LeetRunFailedException {
@@ -53,6 +48,10 @@ public class LeetRunner {
             error("Reflection error for " + clazz.getName() + ": " + e);
             // Optionally rethrow as a runtime or logged-and-continue
             warn("!!This is a safe runner, so ignoring those exception, but make sure to fix them!!");
+        } catch (LeetRunFailedException e) {
+            warn("Failed on class :" + clazz.getSimpleName());
+
+            throw e;
         }
     }
 

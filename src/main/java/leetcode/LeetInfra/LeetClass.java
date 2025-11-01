@@ -1,11 +1,23 @@
 package leetcode.LeetInfra;
 
+import leetcode.LeetInfra.result.ResultHandler;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public abstract class LeetClass<TOUTPUT> {
-    public static final String TEST_RUN_TITLE = "Test run number #%d";
+    private static final String DEFAULT_TEST_RUN_TITLE = "Test run number #%d";
+
+    private ResultHandler<TOUTPUT> resultHandler;
+
+    protected LeetClass() {
+        this(new ResultHandler<>());
+    }
+
+    protected LeetClass(ResultHandler<TOUTPUT> resultHandler) {
+        this.resultHandler = resultHandler;
+    }
 
     abstract List<LeetRun<TOUTPUT>> leetRunList();
 
@@ -17,6 +29,7 @@ public abstract class LeetClass<TOUTPUT> {
         return result;
     }
 
+    // TODO: Make more robust solution
     private void handleTestResult(TOUTPUT actual, TOUTPUT expected) throws LeetRunFailedException {
         if (actual == expected)  {
             System.out.println("Test passed successfully");
@@ -24,6 +37,7 @@ public abstract class LeetClass<TOUTPUT> {
             throw new LeetRunFailedException("Expected : " + expected + " but got : " + actual);
         }
     }
+
 
     public void testRunner() throws LeetRunFailedException {
         AtomicInteger leetRunCounter = new AtomicInteger(1);
@@ -33,11 +47,11 @@ public abstract class LeetClass<TOUTPUT> {
             TOUTPUT expected = leetRun.getExpected();
 
             String runTitle = leetRun.getRunName()
-                    .orElseGet(() -> String.format(TEST_RUN_TITLE, leetRunCounter.get()));
+                    .orElseGet(() -> String.format(DEFAULT_TEST_RUN_TITLE, leetRunCounter.get()));
 
             TOUTPUT actual = measure(runTitle, leetRunSupplier);
 
-            this.handleTestResult(actual, expected);
+            this.resultHandler.handleTestResult(actual, expected);
 
             leetRunCounter.incrementAndGet();
         }

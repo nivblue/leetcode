@@ -70,7 +70,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\leetcode-1.0.0-SNAPSHOT.jar;%APP_HOME%\lib\gson-2.7.jar
+set CLASSPATH=%APP_HOME%\lib\leetcode-1.0.0-SNAPSHOT.jar;%APP_HOME%\lib\gson-2.11.0.jar;%APP_HOME%\lib\jackson-core-2.17.2.jar;%APP_HOME%\lib\jackson-annotations-2.17.2.jar;%APP_HOME%\lib\jackson-databind-2.17.2.jar;%APP_HOME%\lib\error_prone_annotations-2.27.0.jar
 
 
 @rem Execute leetcode

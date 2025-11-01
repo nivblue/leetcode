@@ -1,11 +1,13 @@
 package leetcode;
 
+import leetcode.LeetInfra.LeetRunFailedException;
 import leetcode.LeetInfra.LeetRunner;
 
+import static leetcode.LeetInfra.consts.Constants.DEFAULT_EXERCISES_DIR;
+
 public class Main {
-    public static void main(String args[]) throws Exception {
-        LeetRunner leetRunner = new LeetRunner();
-//        LeetRunner leetRunner = new LeetRunner("leetcode.exercises");
+    public static void main(String args[]) throws LeetRunFailedException {
+        LeetRunner leetRunner = new LeetRunner(DEFAULT_EXERCISES_DIR);
 
         leetRunner.runLeets();
     }
