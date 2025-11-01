@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -62,7 +63,18 @@ public class LeetAssertion {
     }
 
     private boolean assertMaps(Map<?, ?> actual, Map<?, ?> expected) {
-        for (Map.Entry<?, ?> entry : actual.entrySet()) {
+        Set<? extends Map.Entry<?, ?>> actualEntries = actual.entrySet();
+        int aLen = actualEntries.size();
+        int eLen = expected.size();
+        if (eLen != actualEntries.size()) {
+            error("Maps size not the same!");
+            error("actual length : " + aLen);
+            error("expected length : " + eLen);
+
+            return false;
+        }
+
+        for (Map.Entry<?, ?> entry : actualEntries) {
             Object key = entry.getKey();
             Object actualValue = entry.getValue();
 
@@ -84,9 +96,10 @@ public class LeetAssertion {
         int eLen = Array.getLength(expected);
 
         if (aLen != eLen) {
-            System.err.println("Arrays not in the same length!");
-            System.err.println("actual length : " + aLen);
-            System.err.println("expected length : " + eLen);
+            error("Arrays not in the same length!");
+            error("actual length : " + aLen);
+            error("expected length : " + eLen);
+
             return false;
         }
 

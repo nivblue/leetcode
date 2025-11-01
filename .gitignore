@@ -2,4 +2,4 @@
 .gradle
 .qodo
 bin
-build
+#build/.*
