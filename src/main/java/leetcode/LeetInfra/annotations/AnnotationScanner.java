@@ -1,4 +1,4 @@
-package leetcode.LeetInfra;
+package leetcode.LeetInfra.annotations;
 
 import lombok.experimental.UtilityClass;
 
@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static leetcode.LeetInfra.logger.LeetLogger.warn;
 
 @UtilityClass
 public class AnnotationScanner {
@@ -37,6 +39,16 @@ public class AnnotationScanner {
                 // Must be annotated and a subclass of parentType
                 if (clazz.isAnnotationPresent(annotationClass)
                         && parentType.isAssignableFrom(clazz)) {
+
+                    if (annotationClass == LeetCodeToRun.class) {
+                        LeetCodeToRun annotation = clazz.getAnnotation(LeetCodeToRun.class);
+                        if (!annotation.enabled()) {
+                            warn("Skiping LeetCode class " + className + " - @LeetCodeToRun set to DISABLE in this specific class");
+                            // ⛔ Skip classes explicitly disabled
+                            continue;
+                        }
+                    }
+
                     result.add((Class<? extends T>) clazz);
                 }
             } catch (Throwable ignored) { }

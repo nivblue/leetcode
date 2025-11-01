@@ -19,7 +19,7 @@ public abstract class LeetClass<TOUTPUT> {
         this.resultHandler = resultHandler;
     }
 
-    abstract List<LeetRun<TOUTPUT>> leetRunList();
+    protected abstract List<LeetRun<TOUTPUT>> leetRunList();
 
     private static <T> T measure(String name, Supplier<T> supplier) {
         long start = System.nanoTime();

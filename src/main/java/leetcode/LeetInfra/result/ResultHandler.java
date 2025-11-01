@@ -3,6 +3,8 @@ package leetcode.LeetInfra.result;
 import leetcode.LeetInfra.LeetRunFailedException;
 import lombok.AllArgsConstructor;
 
+import static leetcode.LeetInfra.logger.LeetLogger.success;
+
 @AllArgsConstructor
 public class ResultHandler<TOUTPUT> {
 
@@ -14,7 +16,7 @@ public class ResultHandler<TOUTPUT> {
 
     public void handleTestResult(TOUTPUT actual, TOUTPUT expected) throws LeetRunFailedException {
         if (this.leetAssertion.assertResult(actual, expected))  {
-            System.out.println("Test passed successfully");
+            success("Test passed successfully");
         } else {
             throw new LeetRunFailedException("Expected : " + expected + " but got : " + actual);
         }

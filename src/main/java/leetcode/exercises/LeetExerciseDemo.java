@@ -1,13 +1,15 @@
-package leetcode.LeetInfra;
+package leetcode.exercises;
 
+import leetcode.LeetInfra.LeetClass;
+import leetcode.LeetInfra.LeetRun;
 import leetcode.LeetInfra.annotations.LeetCodeToRun;
 
 import java.util.List;
 
-@LeetCodeToRun
-public class LeetDemo extends LeetClass<Integer> {
+@LeetCodeToRun(enabled = false)
+public class LeetExerciseDemo extends LeetClass<Integer> {
     @Override
-    protected List<LeetRun<Integer>> leetRunList() {
+    public List<LeetRun<Integer>> leetRunList() {
         return List.of(
                 new LeetRun<>("Adding 2 & 4 case", () -> add(2,4), 6),
                 new LeetRun<>(() -> add(14, 28), 42)

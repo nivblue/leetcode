@@ -9,6 +9,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import static leetcode.LeetInfra.logger.LeetLogger.error;
+import static leetcode.LeetInfra.logger.LeetLogger.logMessage;
 
 public class LeetAssertion {
     private final Map<Predicate<Object>, BiPredicate<Object, Object>> assertionsMap = Map.ofEntries(
@@ -27,8 +28,6 @@ public class LeetAssertion {
             Predicate<Object> assertionType = entry.getKey();
 
             if (assertionType.test(expected)) {
-                System.out.println("Asserting " + assertionType.toString());
-
                 if (!assertionType.test(actual)) {
                     error("Not the same type!");
                     error("actual : " + actual.getClass().getSimpleName());
@@ -40,7 +39,13 @@ public class LeetAssertion {
             }
         }
 
-        System.out.println("class : " + actual.getClass().getSimpleName() + ", " + expected.getClass().getSimpleName());
+        if (!actual.getClass().getSimpleName().equals(expected.getClass().getSimpleName())) {
+            error("Actual [" + actual.getClass().getSimpleName() + "]" +
+                    " and expected [" + expected.getClass().getSimpleName() + "]" +
+                    "Are not from the same type!");
+            return false;
+        }
+
         return actual.equals(expected);
     }
 
