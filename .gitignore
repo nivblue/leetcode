@@ -1,5 +1,5 @@
 .idea
-#.gradle
+.gradle
 .qodo
-#bin
+bin
 build
