@@ -4,6 +4,7 @@ import leetcode.LeetInfra.LeetClass;
 import leetcode.LeetInfra.LeetRun;
 import leetcode.LeetInfra.annotations.LeetCodeToRun;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -21,9 +22,9 @@ public class Baseball extends LeetClass<Integer> {
         int solution3 = 0;
 
         return List.of(
-                new LeetRun<>("First run", () -> calPoints(operations1), solution1),
+                new LeetRun<>("First run", () -> calPoints(operations1), solution1, false),
                 new LeetRun<>("Second run", () -> calPoints(operations2), solution2),
-                new LeetRun<>("Third run", () -> calPoints(operations3), solution3)
+                new LeetRun<>("Third run", () -> calPoints(operations3), solution3, false)
         );
     }
 
@@ -32,7 +33,7 @@ public class Baseball extends LeetClass<Integer> {
             return 0;
         }
 
-        Stack<Integer> stack = new Stack<>();
+        LinkedList<Integer> stack = new LinkedList<>();
 
         for (String str : operations) {
             if (str.equals("C")) {
@@ -42,11 +43,9 @@ public class Baseball extends LeetClass<Integer> {
 
                 stack.push(lastNumber * 2);
             } else if (str.equals("+")) {
-                int lastNumber = stack.pop();
-                int secondLastNumber = stack.pop();
+                int lastNumber = stack.peek();
+                int secondLastNumber = stack.get(1);
 
-                stack.push(secondLastNumber);
-                stack.push(lastNumber);
                 stack.push(lastNumber + secondLastNumber);
             } else { // asuming number
                 stack.push(Integer.valueOf(str));

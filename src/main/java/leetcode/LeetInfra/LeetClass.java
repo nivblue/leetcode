@@ -33,6 +33,7 @@ public abstract class LeetClass<TOUTPUT> {
 
             if (!leetRun.isRun()) {
                 System.out.println("Skipping leetRun : " + runTitle);
+                continue;
             }
 
             Supplier<TOUTPUT> leetRunSupplier = leetRun.getLeetRunSupplier();

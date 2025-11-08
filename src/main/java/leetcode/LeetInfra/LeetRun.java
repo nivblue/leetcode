@@ -14,7 +14,7 @@ public class LeetRun<TOUTPUT> {
     private TOUTPUT expected;
     private boolean isRun;
 
-    private LeetRun(String runName, Supplier<TOUTPUT> leetRunSupplier, TOUTPUT expected, boolean isRun) {
+    public LeetRun(String runName, Supplier<TOUTPUT> leetRunSupplier, TOUTPUT expected, boolean isRun) {
         this.runName = runName;
         this.leetRunSupplier = leetRunSupplier;
         this.expected = expected;

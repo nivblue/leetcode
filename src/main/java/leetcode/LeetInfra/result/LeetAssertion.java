@@ -1,132 +1,60 @@
 package leetcode.LeetInfra.result;
 
+import leetcode.LeetInfra.result.assertion_strategies.*;
+
 import java.lang.reflect.Array;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
+import java.util.*;
 
 import static leetcode.LeetInfra.logger.LeetLogger.error;
-import static leetcode.LeetInfra.logger.LeetLogger.logMessage;
 
 public class LeetAssertion {
-    private final Map<Predicate<Object>, BiPredicate<Object, Object>> assertionsMap = Map.ofEntries(
-            Map.entry(this::isArray, this::assertArrays),
-            Map.entry(this::isMap,   (a, b) -> assertMaps((Map<?, ?>) a, (Map<?, ?>) b)),
-            Map.entry(this::isList,  (a, b) -> assertLists((List<?>) a, (List<?>) b))
+    private final List<IAssertionStrategy> assertionStrategies = List.of(
+            new NullAssertion(),
+            new MapAssertion(),
+            new ListAssertion(),
+            new ArrayAssertion(),
+            new PrimitiveAssertion()
     );
 
     public boolean assertResult(Object actual, Object expected) {
-        if (Objects.isNull(expected)) {
-            System.out.println("Null assertions");
-            return Objects.isNull(actual);
-        }
+        for (IAssertionStrategy assertionStrategy : this.assertionStrategies) {
+            if (assertionStrategy.isAssertionType(expected)) {
+                if (!assertionStrategy.isAssertionType(actual)) {
+                    String actualType = getObjectType(actual);
+                    String expectedType = getObjectType(expected);
 
-        for (Map.Entry<Predicate<Object>, BiPredicate<Object, Object>> entry : this.assertionsMap.entrySet()) {
-            Predicate<Object> assertionType = entry.getKey();
-
-            if (assertionType.test(expected)) {
-                if (!assertionType.test(actual)) {
                     error("Not the same type!");
-                    error("actual : " + actual.getClass().getSimpleName());
-                    error("expected : " + expected.getClass().getSimpleName());
+                    error("actual : " + actualType);
+                    error("expected : " + expectedType);
                     return false;
                 }
 
-                return entry.getValue().test(actual, expected);
+                return assertionStrategy.assertResult(
+                        assertionStrategy.castToAssertionType(actual),
+                        assertionStrategy.castToAssertionType(expected),
+                        this::assertResult);
             }
         }
 
-        if (!actual.getClass().getSimpleName().equals(expected.getClass().getSimpleName())) {
-            error("Actual [" + actual.getClass().getSimpleName() + "]" +
-                    " and expected [" + expected.getClass().getSimpleName() + "]" +
-                    "Are not from the same type!");
+        String actualType = getObjectType(actual);
+        String expectedType = getObjectType(expected);
+
+        String basicErrorMessage = "Actual [" + actualType + "] and expected [" + expectedType + "]";
+
+        if (!actualType.equals(expectedType)) {
+            error(basicErrorMessage + "Are not from the same type!");
             return false;
         }
 
-        return actual.equals(expected);
+        error(basicErrorMessage + "Assertion type not supported!");
+
+        return false;
     }
 
-    private boolean assertLists(List<?> actual, List<?> expected) {
-        int aLen = actual.size();
-        int eLen = expected.size();
-
-        if (aLen != eLen) {
-            System.err.println("Lists not in the same length!");
-            System.err.println("actual length : " + aLen);
-            System.err.println("expected length : " + eLen);
-            return false;
-        }
-
-        for (int i = 0; i < aLen; i++) {
-            if (!assertResult(actual.get(i), expected.get(i))) return false;
-        }
-
-        return true;
-    }
-
-    private boolean assertMaps(Map<?, ?> actual, Map<?, ?> expected) {
-        Set<? extends Map.Entry<?, ?>> actualEntries = actual.entrySet();
-        int aLen = actualEntries.size();
-        int eLen = expected.size();
-        if (eLen != actualEntries.size()) {
-            error("Maps size not the same!");
-            error("actual length : " + aLen);
-            error("expected length : " + eLen);
-
-            return false;
-        }
-
-        for (Map.Entry<?, ?> entry : actualEntries) {
-            Object key = entry.getKey();
-            Object actualValue = entry.getValue();
-
-            if (!expected.containsKey(key)) {
-                System.err.println("expected is missing following key : " + key + " [value=" + actualValue + "]");
-                return false;
-            }
-
-            Object expectedValue = expected.get(key);
-
-            if (!this.assertResult(actualValue, expectedValue)) return false;
-        }
-
-        return true;
-    }
-
-    private boolean assertArrays(Object actual, Object expected) {
-        int aLen = Array.getLength(actual);
-        int eLen = Array.getLength(expected);
-
-        if (aLen != eLen) {
-            error("Arrays not in the same length!");
-            error("actual length : " + aLen);
-            error("expected length : " + eLen);
-
-            return false;
-        }
-
-        for (int i = 0; i < aLen; i++) {
-            Object aElem = Array.get(actual, i);
-            Object eElem = Array.get(expected, i);
-
-            if (!assertResult(aElem, eElem)) return false;
-        }
-
-        return true;
-    }
-
-    private boolean isArray(Object type) {
-        return Objects.nonNull(type) && type.getClass().isArray();
-    }
-
-    private boolean isMap(Object type) {
-        return Objects.nonNull(type) && type instanceof Map;
-    }
-
-    private boolean isList(Object type) {
-        return Objects.nonNull(type) && type instanceof List;
+    private String getObjectType(Object obj) {
+        return Optional.ofNullable(obj)
+                .map(Object::getClass)
+                .map(Class::getSimpleName)
+                .orElseGet(() -> "null");
     }
 }
