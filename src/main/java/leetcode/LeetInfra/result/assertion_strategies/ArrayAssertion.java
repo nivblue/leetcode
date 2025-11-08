@@ -34,7 +34,6 @@ public class ArrayAssertion implements IAssertionStrategy {
             Object aElem = Array.get(actual, i);
             Object eElem = Array.get(expected, i);
 
-            System.out.println("using callback for actual : " + aElem + ", and expected : " + eElem);
             if (!assertionCallback.test(aElem, eElem)) return false;
         }
 
