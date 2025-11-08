@@ -6,7 +6,7 @@ import leetcode.LeetInfra.LeetRunner;
 import static leetcode.LeetInfra.consts.Constants.DEFAULT_EXERCISES_DIR;
 
 public class Main {
-    public static void main(String args[]) throws LeetRunFailedException, ClassNotFoundException {
+    public static void main(String args[]) throws LeetRunFailedException {
         LeetRunner leetRunner = new LeetRunner(DEFAULT_EXERCISES_DIR);
 
         leetRunner.runLeets();

@@ -3,6 +3,7 @@ package leetcode.LeetInfra;
 import leetcode.LeetInfra.annotations.AnnotationScanner;
 import leetcode.LeetInfra.annotations.LeetCodeToRun;
 import leetcode.LeetInfra.logger.LeetLogger;
+import leetcode.LeetInfra.times.RunMeasureTool;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -32,14 +33,19 @@ public class LeetRunner {
     public void runLeets() throws LeetRunFailedException {
         List<Class<? extends LeetClass>> tasks = this.findClasses();
 
+        RunMeasureTool runMeasureTool = new RunMeasureTool();
+
         if (tasks.isEmpty()) {
             warn("WARNING: No leetcode classes found...");
             return;
         }
 
         for (Class<? extends LeetClass> clazz : tasks) {
+            runMeasureTool.startTimer();
             this.runOneClass(clazz);
-            success("Class " + clazz.getSimpleName() + " passed successfully", LeetLogger.getBOLD_TEXT());
+            double duration = runMeasureTool.endTimer();
+            String durationString = String.format("%.3f ms", duration);
+            success("Class " + clazz.getSimpleName() + " passed successfully [" + durationString + "]", LeetLogger.getBOLD_TEXT());
         }
     }
 
@@ -91,10 +97,6 @@ public class LeetRunner {
             // 3) Let testRunner exceptions bubble up
 
             instance.testRunner();
-
-//            String measureTitle = String.format("Running class %s cases", clazz.getName());
-
-//            measure("Running class ", instance.testRunner());
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             // Pure reflection issues (missing ctor, abstract class, inaccessible, etc.)
             error("Reflection error for " + clazz.getName() + ": " + e);

@@ -53,7 +53,7 @@ public abstract class LeetClass<TOUTPUT> {
         } catch (LeetRunFailedException e) {
             throw e;
         } catch (Exception e) {
-            error("Running case failed for another reaason");
+            error("Running case failed for another reason");
         }
 
         return null;
