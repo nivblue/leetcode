@@ -17,9 +17,6 @@ public class ListAssertion implements IAssertionStrategy<List<?>> {
 
     @Override
     public boolean assertResult(List<?> actual, List<?> expected, BiPredicate<Object, Object> assertionCallback) {
-//        List<?> actualList = ((List<?>) actual);
-//        List<?> expectedList = ((List<?>) expected);
-
         int aLen = actual.size();
         int eLen = expected.size();
 

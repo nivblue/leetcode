@@ -6,9 +6,8 @@ import leetcode.LeetInfra.annotations.LeetCodeToRun;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
-@LeetCodeToRun
+@LeetCodeToRun(enabled = false)
 public class Baseball extends LeetClass<Integer> {
     @Override
     protected List<LeetRun<Integer>> leetRunList() {

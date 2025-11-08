@@ -20,9 +20,6 @@ public class MapAssertion implements IAssertionStrategy<Map<?,?>> {
 
     @Override
     public boolean assertResult(Map<?,?> actual, Map<?,?> expected, BiPredicate<Object, Object> assertionCallback) {
-//        Map<?, ?> actualMap = (Map<?, ?>) actual;
-//        Map<?, ?> expectedMap = (Map<?, ?>) expected;
-
         Set<? extends Map.Entry<?, ?>> actualEntries = actual.entrySet();
         int aLen = actualEntries.size();
         int eLen = expected.size();
