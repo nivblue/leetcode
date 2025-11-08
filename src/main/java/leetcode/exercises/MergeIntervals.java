@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-@LeetCodeToRun()
+@LeetCodeToRun(enabled = false)
 public class MergeIntervals extends LeetClass<Integer[][]> {
     @Override
     protected List<LeetRun<Integer[][]>> leetRunList() {
