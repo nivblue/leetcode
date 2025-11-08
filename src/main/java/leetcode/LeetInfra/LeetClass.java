@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import static leetcode.LeetInfra.logger.LeetLogger.error;
+import static leetcode.LeetInfra.times.RunMeasureTool.measure;
+
 public abstract class LeetClass<TOUTPUT> {
     private static final String DEFAULT_TEST_RUN_TITLE = "Test run number #%d";
 
@@ -21,39 +24,37 @@ public abstract class LeetClass<TOUTPUT> {
 
     protected abstract List<LeetRun<TOUTPUT>> leetRunList();
 
-    private static <T> T measure(String name, Supplier<T> supplier) {
-        long start = System.nanoTime();
-        T result = supplier.get();
-        long end = System.nanoTime();
-        System.out.printf("%s took %.3f ms%n", name, (end - start) / 1_000_000.0);
-        return result;
-    }
-
-    // TODO: Make more robust solution
-    private void handleTestResult(TOUTPUT actual, TOUTPUT expected) throws LeetRunFailedException {
-        if (actual == expected)  {
-            System.out.println("Test passed successfully");
-        } else {
-            throw new LeetRunFailedException("Expected : " + expected + " but got : " + actual);
-        }
-    }
-
-
     public void testRunner() throws LeetRunFailedException {
         AtomicInteger leetRunCounter = new AtomicInteger(1);
 
         for (LeetRun<TOUTPUT> leetRun : this.leetRunList()) {
-            Supplier<TOUTPUT> leetRunSupplier = leetRun.getLeetRunSupplier();
-            TOUTPUT expected = leetRun.getExpected();
-
             String runTitle = leetRun.getRunName()
                     .orElseGet(() -> String.format(DEFAULT_TEST_RUN_TITLE, leetRunCounter.get()));
 
-            TOUTPUT actual = measure(runTitle, leetRunSupplier);
+            if (!leetRun.isRun()) {
+                System.out.println("Skipping leetRun : " + runTitle);
+            }
+
+            Supplier<TOUTPUT> leetRunSupplier = leetRun.getLeetRunSupplier();
+            TOUTPUT expected = leetRun.getExpected();
+
+            TOUTPUT actual = runAndMeasure(runTitle, leetRunSupplier);
 
             this.resultHandler.handleTestResult(actual, expected);
 
             leetRunCounter.incrementAndGet();
         }
+    }
+
+    private TOUTPUT runAndMeasure(String runTitle, Supplier<TOUTPUT> leetRunSupplier) throws LeetRunFailedException {
+        try {
+            return measure(runTitle, leetRunSupplier);
+        } catch (LeetRunFailedException e) {
+            throw e;
+        } catch (Exception e) {
+            error("Running case failed for another reaason");
+        }
+
+        return null;
     }
 }

@@ -38,7 +38,7 @@ public class LeetRunner {
         }
 
         for (Class<? extends LeetClass> clazz : tasks) {
-            this.runOne(clazz);
+            this.runOneClass(clazz);
             success("Class " + clazz.getSimpleName() + " passed successfully", LeetLogger.getBOLD_TEXT());
         }
     }
@@ -71,7 +71,7 @@ public class LeetRunner {
         return classes;
     }
 
-    private void runOne(Class<?> clazz) throws LeetRunFailedException {
+    private void runOneClass(Class<?> clazz) throws LeetRunFailedException {
         // 1) Skip classes that aren't LeetClass
         if (!LeetClass.class.isAssignableFrom(clazz)) {
             // treat as "not runnable" rather than a failure
@@ -89,7 +89,12 @@ public class LeetRunner {
 
             logMessage("Running class tests : " + clazz.getSimpleName());
             // 3) Let testRunner exceptions bubble up
+
             instance.testRunner();
+
+//            String measureTitle = String.format("Running class %s cases", clazz.getName());
+
+//            measure("Running class ", instance.testRunner());
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             // Pure reflection issues (missing ctor, abstract class, inaccessible, etc.)
             error("Reflection error for " + clazz.getName() + ": " + e);
